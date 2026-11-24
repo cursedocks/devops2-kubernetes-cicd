@@ -70,3 +70,30 @@ jobs:
           tags: |
             ${{ steps.image.outputs.name }}:latest
             ${{ steps.image.outputs.name }}:${{ github.sha }}
+  deploy:
+    name: Deploy to Kubernetes
+    needs: build-and-push
+    runs-on: self-hosted
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Kubernetes connection
+        run: kubectl get nodes
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install fastapi ./helm \
+            --namespace dev \
+            --set image.repository=ghcr.io/${GITHUB_REPOSITORY,,} \
+            --set-string image.tag=${GITHUB_SHA} \
+            --wait \
+            --atomic \
+            --timeout 180s
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/fastapi-deployment -n dev
+          kubectl get pods -n dev
