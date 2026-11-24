@@ -12,7 +12,7 @@ app = FastAPI(
 @app.get("/")
 def root():
     return {
-        "message": "Hello from Kubernetes CI/CD project!",
+        "message": "Hello from Kubernetes CI/CD project! Version 2.0",
         "status": "running"
     }
 
@@ -28,6 +28,6 @@ def health():
 def info():
     return {
         "application": "Kubernetes CI/CD Demo",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
