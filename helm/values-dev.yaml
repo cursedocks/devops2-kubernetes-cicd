@@ -1,0 +1,14 @@
+namespace: dev
+
+replicaCount: 2
+
+image:
+  repository: devops2-app
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+  targetPort: 8000
+
